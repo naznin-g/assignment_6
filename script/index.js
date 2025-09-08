@@ -40,7 +40,25 @@ const loadCategoryPlant = (id, categoryName, btn) => {
       manageSpinner(false); 
     });
   };
+ const loadPlantDescription=async(id)=>{
+  const url=`https://openapi.programming-hero.com/api/plant/${id}`;
+  
+  const res=await fetch(url);
+  const description=await res.json();
+  displayPlantDescription(description.plants);
+};
+const displayPlantDescription=(plant)=>{
+  console.log(plant);
+  const descriptionBox=document.getElementById("description-container");
+  descriptionBox.innerHTML=`
+  <div>
+    <h3  class="text-xl font-semibold mb-1 cursor-pointer text-green-500">${plant.name}</h3>
+      <p class="text-gray-600 mb-2">${plant.description}</p>
+      
+      <button class="font-bold text-green-600 mb-2 p-2 rounded-xl bg-green-200">${plant.category}</button></div>`;
+  document.getElementById("plants_modal").showModal();
 
+};
 
 const displayCategoryPlant = (plants) => {
   const plantContainer = document.getElementById("plant-container");
@@ -61,11 +79,11 @@ const displayCategoryPlant = (plants) => {
 
     card.innerHTML = `
       <img src="${plant.image}" alt="${plant.name}" class="w-full h-40 object-cover rounded mb-3">
-      <h3 class="text-xl font-semibold mb-1 cursor-pointer text-blue-600 hover:underline">${plant.name}</h3>
+      <h3 onclick="loadPlantDescription(${plant.id})" class="text-xl font-semibold mb-1 cursor-pointer hover:underline">${plant.name}</h3>
       <p class="text-gray-600 mb-2">${plant.description.slice(0, 80)}...</p>
       <div class="flex justify-between">
-      <button class="font-bold text-green-600 mb-2 rounded-xl bg-green-200">${plant.category}</button>
-      <p class="font-bold text-green-600 mb-2">Price:৳${plant.price}</p></div>
+      <button class="font-bold text-green-600 mb-2 p-2 rounded-xl bg-green-200">${plant.category}</button>
+      <p class="font-bold text-green-600 p-2 mb-2">Price:৳${plant.price}</p></div>
       <button class="btn btn-success w-full text-white">Add to Cart</button>
     `;
     plantContainer.appendChild(card);
