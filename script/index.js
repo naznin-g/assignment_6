@@ -1,4 +1,12 @@
-
+const manageSpinner = (status) => {
+  if (status == true) {
+    document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("plant-container").classList.add("hidden");
+  } else {
+    document.getElementById("plant-container").classList.remove("hidden");
+    document.getElementById("spinner").classList.add("hidden");
+  }
+};
 const loadCategories = () => {
   fetch("https://openapi.programming-hero.com/api/categories")
     .then((res) => res.json())
@@ -10,10 +18,11 @@ const removeActive = () => {
   categoryButtons.forEach((btn) => btn.classList.remove("active"));
 };
 
-
-	const loadCategoryPlant = (id, categoryName, btn) => {
+const loadCategoryPlant = (id, categoryName, btn) => {
   removeActive();
-  btn.classList.add("active"); // mark clicked button active
+  btn.classList.add("active");
+
+  manageSpinner(true); // show spinner + hide plants
 
   const url = `https://openapi.programming-hero.com/api/category/${id}`;
 
@@ -21,23 +30,25 @@ const removeActive = () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status && data.plants) {
-        displayCategoryPlant(data.plants); // show filtered plants
+        displayCategoryPlant(data.plants);
       } else {
-        displayCategoryPlant([]); // fallback if no plants
+        displayCategoryPlant([]);
       }
     })
-    .catch((err) => console.error("Error fetching plants:", err));
-};
+    .catch((err) => console.error("Error fetching plants:", err))
+    .finally(() => {
+      manageSpinner(false); 
+    });
+  };
 
 
-// Display plant cards
 const displayCategoryPlant = (plants) => {
   const plantContainer = document.getElementById("plant-container");
   plantContainer.innerHTML = "";
 
   if (!plants || plants.length === 0) {
     plantContainer.innerHTML = `
-      <div class="text-center col-span-full rounded-xl py-10 space-y-6 font-bangla">
+      <div class="text-center col-span-full rounded-xl py-10 space-y-6">
         <p>No plants found for this category.</p>
       </div>
     `;
@@ -52,8 +63,10 @@ const displayCategoryPlant = (plants) => {
       <img src="${plant.image}" alt="${plant.name}" class="w-full h-40 object-cover rounded mb-3">
       <h3 class="text-xl font-semibold mb-1 cursor-pointer text-blue-600 hover:underline">${plant.name}</h3>
       <p class="text-gray-600 mb-2">${plant.description.slice(0, 80)}...</p>
-      <p class="font-bold text-green-600 mb-2">Price: $${plant.price}</p>
-      <button class="btn btn-success w-full">Add to Cart</button>
+      <div class="flex justify-between">
+      <button class="font-bold text-green-600 mb-2 rounded-xl bg-green-200">${plant.category}</button>
+      <p class="font-bold text-green-600 mb-2">Price:৳${plant.price}</p></div>
+      <button class="btn btn-success w-full text-white">Add to Cart</button>
     `;
     plantContainer.appendChild(card);
   });
@@ -69,7 +82,7 @@ const displayCategory = (categories) => {
     btnDiv.innerHTML = `
       <button
         id="category-btn-${category.id}"
-        class="category-btn w-full text-left py-2 px-3 border rounded hover:bg-green-100 transition"
+        class="category-btn w-full text-left py-2 px-3 border rounded"
         onclick="loadCategoryPlant(${category.id}, '${category.category_name}', this)"
       >
         ${category.category_name}
