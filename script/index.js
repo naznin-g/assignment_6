@@ -130,7 +130,7 @@ loadCategories();
 let cart = [];
 
 const addToCart = (plant) => {
-  // Check if plant already exists
+  
   const existing = cart.find(item => item.name === plant.name);
   if (existing) {
     existing.quantity += 1;
