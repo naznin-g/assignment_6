@@ -155,42 +155,24 @@ const renderCart = () => {
   let totalQuantity = 0;
 
   cart.forEach((item, index) => {
-    totalPrice += item.price * item.quantity;
+    const itemTotal=item.price*item.quantity;
+    totalPrice += itemTotal;
     totalQuantity += item.quantity;
 
     const cartItem = document.createElement("div");
     cartItem.className = "flex justify-between items-center border-b py-2";
 
     cartItem.innerHTML = `
-      <div>
-        <h3 class="font-semibold">${item.name}</h3>
-        <div class="flex items-center space-x-2">
-          <button class="decrease text-red-500 px-2">-</button>
-          <span>${item.quantity}</span>
-          <button class="increase text-green-500 px-2">+</button>
+      <div class="flex flex-col">
+      <div class="font-semibold">${item.name}</div>
+        <div>
+        ${item.quantity}x৳${item.price}=৳${item.price*item.quantity}
         </div>
-        <span class="text-gray-700">৳${item.price * item.quantity}</span>
-      </div>
+        </div>
+
       <button class="remove text-red-600 hover:underline">x</button>
     `;
 
-    // decrease quantity
-    cartItem.querySelector(".decrease").addEventListener("click", () => {
-      if (item.quantity > 1) {
-        item.quantity -= 1;
-      } else {
-        cart.splice(index, 1);
-      }
-      renderCart();
-    });
-
-    // increase quantity
-    cartItem.querySelector(".increase").addEventListener("click", () => {
-      item.quantity += 1;
-      renderCart();
-    });
-
-    // remove item
     cartItem.querySelector(".remove").addEventListener("click", () => {
       cart.splice(index, 1);
       renderCart();
